@@ -14,6 +14,7 @@ DIV = 240
 GOG = 300
 GOL = 301
 GOE = 310
+GOTO = 311
 
 # Halt
 HALT = 400
@@ -31,6 +32,7 @@ OPCODES = {
     "GOG": GOG,
     "GOL": GOL,
     "GOE": GOE,
+    "GOTO": GOTO,
     "HALT": HALT
 }
 
@@ -38,7 +40,7 @@ OPCODES = {
 ARGS = {
     LOAD: 2,
     PRINT: 1,
-    INPUT: 2,
+    INPUT: 1,
     INC: 1,
     ADD: 3,
     SUB: 3,
@@ -47,5 +49,6 @@ ARGS = {
     GOG: 3,
     GOL: 3,
     GOE: 3,
+    GOTO: 1,
     HALT: 0
 }
