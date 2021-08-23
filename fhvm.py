@@ -138,7 +138,7 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.i += 1
                 r3 = self.program[self.i]
-                self.MUL(r1, -r2, r3)
+                self.MUL(r1, r2, r3)
 
             elif memo == "GOG":
                 self.i += 1
