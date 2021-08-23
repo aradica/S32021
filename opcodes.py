@@ -35,17 +35,17 @@ OPCODES = {
 }
 
 
-# ARGS = {
-#     LOAD: 2,
-#     PRINT: 1,
-#     INPUT: 2,
-#     INC: 1,
-#     ADD: 3,
-#     SUB: 3,
-#     MUL: 3,
-#     DIV: 3,
-#     GOG: 3,
-#     GOL: 3,
-#     GOE: 3,
-#     HALT: 0
-# }
+ARGS = {
+    LOAD: 2,
+    PRINT: 1,
+    INPUT: 2,
+    INC: 1,
+    ADD: 3,
+    SUB: 3,
+    MUL: 3,
+    DIV: 3,
+    GOG: 3,
+    GOL: 3,
+    GOE: 3,
+    HALT: 0
+}
