@@ -1,4 +1,4 @@
-from opcodes import OPCODES
+from opcodes import *
 
 
 class VirtualMachine:
@@ -54,21 +54,26 @@ class VirtualMachine:
     ###################
 
     def loadProgramFile(self, filename):
-        """Loads program from file"""
-        with open(filename, "r") as f:
-            L = f.readlines()
-            kod = []
-            OPCODES2 = {value: key for key, value in OPCODES.items()}
-            for i in L:
-                m = i.split()
-                # print(m)
-                for j in range(len(m)):
-                    if j < 1:
-                        kod.append(OPCODES2[m[j]])
-                    else:
-                        kod.append(m[j])
-            kod = list(map(int, kod))
-        return kod
+        """Loads raw program from file and returns list of lists(lines)"""
+        with open(filename, "r") as file:
+            lines = file.readlines()
+            lines = [line.split() for line in lines]
+        # return lines
+        program = self.preprocess(lines)
+        self.loadProgram(program)
+
+    def preprocess(self, lines):
+        """
+        Replaces codes with numeric opcodes and
+        replaces line numbers with actual indexes
+        """
+        program = []
+        for line in lines:
+            cmd = line[0]
+            program.append(OPCODES[cmd])
+            for arg in line[1:]:
+                program.append(int(arg))
+        return program
 
     def loadProgram(self, program):
         if len(program) > self.p_registers:
@@ -85,10 +90,10 @@ class VirtualMachine:
             # Trenutna instrukcija ili argument
             code = self.program[self.i]
             # print(self.i, "CODE:", code)
-            memo = OPCODES[code]
-            if memo == "HALT":
+            # code = OPCODES[code]
+            if code == HALT:
                 break
-            elif memo == "LOAD":
+            elif code == LOAD:
                 self.i += 1
                 value = self.program[self.i]
                 self.i += 1
@@ -97,23 +102,23 @@ class VirtualMachine:
                 self.LOAD(value, r)
                 # print("value:", value)
 
-            elif memo == "PRINT":
+            elif code == PRINT:
                 self.i += 1
                 r = self.program[self.i]
                 self.PRINT(r)
 
-            elif memo == "INPUT":
+            elif code == INPUT:
                 self.i += 1
                 r = self.program[self.i]
                 value = int(input())
                 self.LOAD(value, r)
 
-            elif memo == "INC":
+            elif code == INC:
                 self.i += 1
                 r = self.program[self.i]
                 self.INC(r)
 
-            elif memo == "ADD":
+            elif code == ADD:
                 self.i += 1
                 r1 = self.program[self.i]
                 self.i += 1
@@ -122,7 +127,7 @@ class VirtualMachine:
                 r3 = self.program[self.i]
                 self.ADD(r1, r2, r3)
 
-            elif memo == "SUB":
+            elif code == SUB:
                 self.i += 1
                 r1 = self.program[self.i]
                 self.i += 1
@@ -131,7 +136,7 @@ class VirtualMachine:
                 r3 = self.program[self.i]
                 self.ADD(r1, -r2, r3)
 
-            elif memo == "MUL":
+            elif code == MUL:
                 self.i += 1
                 r1 = self.program[self.i]
                 self.i += 1
@@ -140,7 +145,7 @@ class VirtualMachine:
                 r3 = self.program[self.i]
                 self.MUL(r1, r2, r3)
 
-            elif memo == "GOG":
+            elif code == GOG:
                 self.i += 1
                 p = self.program[self.i]
                 self.i += 1
@@ -149,7 +154,7 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.GOG(p, r1, r2)
 
-            elif memo == "GOL":
+            elif code == GOL:
                 self.i += 1
                 p = self.program[self.i]
                 self.i += 1
@@ -158,7 +163,7 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.GOG(p, r2, r1)
 
-            elif memo == "GOE":
+            elif code == GOE:
                 self.i += 1
                 p = self.program[self.i]
                 self.i += 1
@@ -167,16 +172,11 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.GOE(p, r1, r2)
 
-            # print(memo)
+            # print(code)
             # Povecat i
             self.i += 1
 
 
 vm = VirtualMachine(32, 32)
-# program = [0, 2, 0, 0, 3, 1, 1, 0, 1, 2, 4, 2, 5]
-program = vm.loadProgramFile("kod.s3")
-vm.loadProgram(program)
-print(vm)
-# vm.loadProgram(program)
+vm.loadProgramFile("kod.s3")
 vm.run()
-# print(vm)
