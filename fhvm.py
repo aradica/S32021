@@ -72,6 +72,7 @@ class VirtualMachine:
         i = 0
         for line in lines:
             cmd = line[0]
+            skup.add(i)
             program.append(OPCODES[cmd])
             for arg in line[1:]:
                 program.append(int(arg))
@@ -80,7 +81,6 @@ class VirtualMachine:
         i = 0
         for line in lines:
             cmd = line[0]
-            skup.add(i)
             if OPCODES[cmd] in [GOG, GOL, GOE]:
                 # print("debug:", i, skup)
                 program[i+1] = list(skup)[int(line[1])]
