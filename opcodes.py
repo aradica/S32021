@@ -1,19 +1,51 @@
-# LOAD <vrijednost> <R>
-# Arithmetika: 200 - ...
-# I/O: 100 - ...
-# GOTO: 300
-#
+# I/O: 100
+LOAD = 100
+PRINT = 101
+INPUT = 110
+
+# Arithmetic
+INC = 200
+ADD = 210
+SUB = 220
+MUL = 230
+DIV = 240
+
+# Jumps
+GOG = 300
+GOL = 301
+GOE = 310
+
+# Halt
+HALT = 400
+
+
 OPCODES = {
-    100: "LOAD",
-    101: "PRINT",
-    110: "INPUT",
-    200: "INC",
-    210: "ADD",
-    220: "SUB",
-    230: "MUL",
-    240: "DIV",
-    300: "GOG",
-    301: "GOL",
-    310: "GOE",
-    400: "HALT"
+    "LOAD": LOAD,
+    "PRINT": PRINT,
+    "INPUT": INPUT,
+    "INC": INC,
+    "ADD": ADD,
+    "SUB": SUB,
+    "MUL": MUL,
+    "DIV": DIV,
+    "GOG": GOG,
+    "GOL": GOL,
+    "GOE": GOE,
+    "HALT": HALT
 }
+
+
+# ARGS = {
+#     LOAD: 2,
+#     PRINT: 1,
+#     INPUT: 2,
+#     INC: 1,
+#     ADD: 3,
+#     SUB: 3,
+#     MUL: 3,
+#     DIV: 3,
+#     GOG: 3,
+#     GOL: 3,
+#     GOE: 3,
+#     HALT: 0
+# }
