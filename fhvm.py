@@ -68,11 +68,24 @@ class VirtualMachine:
         replaces line numbers with actual indexes
         """
         program = []
+        skup = set()
+        i = 0
         for line in lines:
             cmd = line[0]
             program.append(OPCODES[cmd])
             for arg in line[1:]:
                 program.append(int(arg))
+                i += 1
+            i += 1
+        i = 0
+        for line in lines:
+            cmd = line[0]
+            skup.add(i)
+            if OPCODES[cmd] in [GOG, GOL, GOE]:
+                # print("debug:", i, skup)
+                program[i+1] = list(skup)[int(line[1])]
+            i += ARGS[OPCODES[cmd]]
+            i += 1
         return program
 
     def loadProgram(self, program):
@@ -179,4 +192,5 @@ class VirtualMachine:
 
 vm = VirtualMachine(32, 32)
 vm.loadProgramFile("kod.s3")
+# print(vm)
 vm.run()
