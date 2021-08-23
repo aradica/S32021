@@ -99,7 +99,7 @@ class VirtualMachine:
         i = 0
         for line in lines:
             cmd = line[0]
-            if OPCODES[cmd] in [GOG, GOL, GOE]:
+            if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
                 # print("debug:", i, lineSet)
                 program[i+1] = list(lineSet)[int(line[1])-1]
             i += ARGS[OPCODES[cmd]]
