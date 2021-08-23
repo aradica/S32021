@@ -1,4 +1,13 @@
+"""
+'Full House' Virtual Machine
+
+Summer School of Science
+Project: Turing Complete
+Višnjan, 2021
+"""
 from opcodes import *
+
+DEBUG = False
 
 
 class VirtualMachine:
@@ -12,7 +21,7 @@ class VirtualMachine:
         self.i = 0
 
     def __repr__(self):
-        return f"[VM] R: {self.registers}\nPROGRAM:{self.program}"
+        return f"[VM] R: {self.registers}\nP:{self.program}"
 
     # instrukcije
     ################################
@@ -41,15 +50,22 @@ class VirtualMachine:
         """If r1 == r2 GOTO p"""
         if self.registers[r1] == self.registers[r2]:
             self.i = p
+            # run loop increments automatically so we subtract 1
             self.i -= 1
 
+    def GOTO(self, p):
+        """Unconditional GOTO p"""
+        self.i = p
+        # run loop increments automatically so we subtract 1
+        self.i -= 1
+
     def INC(self, r):
-        """Increments register"""
+        """Increments register r"""
         self.registers[r] += 1
 
     def PRINT(self, r):
         """Prints the value of register r"""
-        print(self.registers[r])
+        print(">>>", self.registers[r])
 
     ###################
 
@@ -59,6 +75,8 @@ class VirtualMachine:
             lines = file.readlines()
             lines = [line.split() for line in lines]
         # return lines
+        if DEBUG:
+            print("[DEBUG]", lines)
         program = self.preprocess(lines)
         self.loadProgram(program)
 
@@ -68,11 +86,11 @@ class VirtualMachine:
         replaces line numbers with actual indexes
         """
         program = []
-        skup = set()
+        lineSet = set()
         i = 0
         for line in lines:
             cmd = line[0]
-            skup.add(i)
+            lineSet.add(i)
             program.append(OPCODES[cmd])
             for arg in line[1:]:
                 program.append(int(arg))
@@ -82,10 +100,12 @@ class VirtualMachine:
         for line in lines:
             cmd = line[0]
             if OPCODES[cmd] in [GOG, GOL, GOE]:
-                # print("debug:", i, skup)
-                program[i+1] = list(skup)[int(line[1])]
+                # print("debug:", i, lineSet)
+                program[i+1] = list(lineSet)[int(line[1])-1]
             i += ARGS[OPCODES[cmd]]
             i += 1
+        if DEBUG:
+            print("[DEBUG]", program)
         return program
 
     def loadProgram(self, program):
@@ -99,6 +119,7 @@ class VirtualMachine:
 
     def run(self):
         """Runs the current program"""
+        print("===RUN===")
         while True:
             # Trenutna instrukcija ili argument
             code = self.program[self.i]
@@ -123,7 +144,7 @@ class VirtualMachine:
             elif code == INPUT:
                 self.i += 1
                 r = self.program[self.i]
-                value = int(input())
+                value = int(input("<<< "))
                 self.LOAD(value, r)
 
             elif code == INC:
@@ -185,12 +206,21 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.GOE(p, r1, r2)
 
-            # print(code)
-            # Povecat i
+            elif code == GOTO:
+                self.i += 1
+                p = self.program[self.i]
+                self.GOTO(p)
+
+            else:
+                print(f"Error! Unknown instruction: '{code}'")
+                break
+
+            # Automatically goes to the next instruction
             self.i += 1
+        print("===END===")
 
 
-vm = VirtualMachine(32, 32)
-vm.loadProgramFile("kod.s3")
-# print(vm)
-vm.run()
+if __name__ == "__main__":
+    vm = VirtualMachine(32, 32)
+    vm.loadProgramFile("kod.s3")
+    vm.run()
