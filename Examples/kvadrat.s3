@@ -7,3 +7,4 @@ MUL 1 1 3
 INC 1
 INC 0
 GOL 5 0 2
+HALT
