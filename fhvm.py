@@ -86,13 +86,9 @@ class VirtualMachine:
         """Prints the value of register r"""
         print(">>>", self.registers[r])
 
-    def CALL(self, fname, regPointer, npointers, nargs):
-        # TODO
+    def CALL(self, fname, regPointer, npointers, nargs): #TODO dovrsi ig
         newProgram = self.p_registers * [0]
-        for i, n in enumerate(range(nargs)):
-            self.i += 1
-            a = self.program[self.i]
-            newProgram[i] = a
+
         self.defs[fname]
         f = VirtualMachine(self.n_registers, self.p_registers)
         f.preprocess(newProgram)
@@ -122,6 +118,10 @@ class VirtualMachine:
                 enddefs.append(i)
 
         return [(d, e) for d, e in zip(defs, reversed(enddefs))]
+
+    def copyDef(self, endpoints):
+        newProgram =  self.p_registers
+        newProgram.append()
 
     def preprocess(self, lines):
         """
@@ -153,9 +153,16 @@ class VirtualMachine:
             cmd = line[0]
             if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
                 proSet = sorted(list(lineSet))
-                print("debug:", proSet, program, line)
+                #print("debug:", proSet, program, line)
                 program[i+1] = proSet[int(line[1])-1]
             i += ARGS[OPCODES[cmd]]
+            i += 1
+        i = 0
+        for line in lines:
+            cmd = line[0]
+            if OPCODES[cmd] in [DEF]: #TODO dodaj DEF u OPCODES
+                endpoints = program.preprocessDefs()
+                newProgram = program.copyDef(endpoints)
             i += 1
         if DEBUG:
             print("[DEBUG]", program)
