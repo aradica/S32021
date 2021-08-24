@@ -21,6 +21,7 @@ class VirtualMachine:
         self.p_registers = p_registers
         # Pokazivač na programski registar
         self.i = 0
+        self.vars = {}
 
     def __repr__(self):
         return f"[VM] R: {self.registers}\nP:{self.program}"
@@ -112,15 +113,24 @@ class VirtualMachine:
             lineSet.add(i)
             program.append(OPCODES[cmd])
             for arg in line[1:]:
-                program.append(int(arg))
+                if arg < 'A':
+                    program.append(int(arg))
+                elif arg >= 'A' and arg <= 'Z' or arg >= 'a' and arg <= 'z':
+                    if arg not in self.vars:
+                        self.vars[arg] = len(self.vars)
+                        program.append(self.vars[arg])
+                    else:
+                        program.append(self.vars[arg])
+                else:
+                    print("Error: Incorrect Input Value")
                 i += 1
             i += 1
         i = 0
         for line in lines:
             cmd = line[0]
             if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
-                # print("debug:", i, lineSet)
                 proSet = sorted(list(lineSet))
+                print("debug:", proSet, program, line)
                 program[i+1] = proSet[int(line[1])-1]
             i += ARGS[OPCODES[cmd]]
             i += 1
