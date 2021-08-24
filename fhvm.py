@@ -29,6 +29,19 @@ class VirtualMachine:
     def LOAD(self, value, r):
         self.registers[r] = value
 
+    def LOADP(self, value, r):
+        """Loads value into location pointed by r"""
+        ptr = self.registers[r]
+        self.registers[ptr] = value
+
+    def COPY(self, r1, r2):
+        """Copies r1 into r2"""
+        self.registers[r2] = self.registers[r1]
+
+    def META(self, p, x):
+        """Writes instruction X into p"""
+        self.program[p] = x
+
     def ADD(self, r1, r2, r3):
         """Stores registers[r1]+registers[r2] into registers[r3] """
         self.registers[r3] = self.registers[r1] + self.registers[r2]
@@ -132,9 +145,14 @@ class VirtualMachine:
                 value = self.program[self.i]
                 self.i += 1
                 r = self.program[self.i]
-                # self.registers[r] = value
                 self.LOAD(value, r)
-                # print("value:", value)
+
+            elif code == LOADP:
+                self.i += 1
+                value = self.program[self.i]
+                self.i += 1
+                r = self.program[self.i]
+                self.LOAD(value, self.registers[r])
 
             elif code == PRINT:
                 self.i += 1
@@ -146,6 +164,19 @@ class VirtualMachine:
                 r = self.program[self.i]
                 value = int(input("<<< "))
                 self.LOAD(value, r)
+
+            elif code == INPUTP:
+                self.i += 1
+                r = self.program[self.i]
+                value = int(input("<<< "))
+                self.LOAD(value, self.registers[r])
+
+            elif code == COPY:
+                self.i += 1
+                r1 = self.program[self.i]
+                self.i += 1
+                r2 = self.program[self.i]
+                self.COPY(r1, r2)
 
             elif code == INC:
                 self.i += 1
@@ -210,6 +241,17 @@ class VirtualMachine:
                 self.i += 1
                 p = self.program[self.i]
                 self.GOTO(p)
+
+            elif code == META:
+                self.i += 1
+                p = self.program[self.i]
+                self.i += 1
+                x = self.program[self.i]
+                self.META(p, x)
+
+            elif code == NOP:
+                # do nothing
+                self.i += 1
 
             else:
                 print(f"Error! Unknown instruction: '{code}'")
