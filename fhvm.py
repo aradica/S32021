@@ -93,7 +93,7 @@ class VirtualMachine:
         with open(filename, "r") as file:
             lines = file.readlines()
             lines = [line.split(";")[0].split() for line in lines]
-        print(lines)
+        # print(lines)
         # return lines
         if DEBUG:
             print("[DEBUG]", lines)
