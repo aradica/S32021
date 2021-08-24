@@ -6,6 +6,8 @@ Project: Turing Complete
 Višnjan, 2021
 """
 from opcodes import *
+import argparse
+
 
 DEBUG = False
 
@@ -278,6 +280,20 @@ class VirtualMachine:
 
 
 if __name__ == "__main__":
-    vm = VirtualMachine(64, 64)
-    vm.loadProgramFile("kod.s3")
+
+    parser = argparse.ArgumentParser(description="Virtual Machine")
+    parser.add_argument("file", type=str,
+                        help="Name of code file (.s3)")
+
+    parser.add_argument("--registers", type=int, default=64,
+                        help="Number of registers")
+    parser.add_argument("--maxprogram", type=int,
+                        default=64, help="Maximum program size")
+    args = parser.parse_args()
+
+    args.file
+    args.registers
+
+    vm = VirtualMachine(args.registers, args.maxprogram)
+    vm.loadProgramFile(args.file)
     vm.run()
