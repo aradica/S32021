@@ -1,0 +1,6 @@
+LOAD 0 0; Program koji ispisuje prvih n brojeva
+INPUT 1
+PRINT 0
+INC 0
+GOL 3 0 1
+HALT
