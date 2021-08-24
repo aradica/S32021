@@ -118,7 +118,8 @@ class VirtualMachine:
             cmd = line[0]
             if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
                 # print("debug:", i, lineSet)
-                program[i+1] = list(lineSet)[int(line[1])-1]
+                proSet = sorted(list(lineSet))
+                program[i+1] = proSet[int(line[1])-1]
             i += ARGS[OPCODES[cmd]]
             i += 1
         if DEBUG:
@@ -214,6 +215,15 @@ class VirtualMachine:
                 r3 = self.program[self.i]
                 self.MUL(r1, r2, r3)
 
+            elif code == DIV:
+                self.i += 1
+                r1 = self.program[self.i]
+                self.i += 1
+                r2 = self.program[self.i]
+                self.i += 1
+                r3 = self.program[self.i]
+                self.DIV(r1, r2, r3)
+
             elif code == GOG:
                 self.i += 1
                 p = self.program[self.i]
@@ -267,6 +277,6 @@ class VirtualMachine:
 
 
 if __name__ == "__main__":
-    vm = VirtualMachine(10, 32)
-    vm.loadProgramFile("fib.s3")
+    vm = VirtualMachine(64, 64)
+    vm.loadProgramFile("kod.s3")
     vm.run()
