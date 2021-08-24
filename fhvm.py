@@ -135,10 +135,25 @@ class VirtualMachine:
             cmd = line[0]
             lineSet.add(i)
             program.append(OPCODES[cmd])
+            if(line[0] == "LIST"):
+                for h in range(int(line[2])):
+                    self.vars[line[1] + str(h)] = len(self.vars)
+                continue
             for arg in line[1:]:
                 if arg < 'A':
                     program.append(int(arg))
-                elif arg >= 'A' and arg <= 'Z' or arg >= 'a' and arg <= 'z':
+                elif("[" in arg):
+                    var = ""
+                    for h in arg:
+                        name = ""
+                        for k in arg:
+                            if(k == "["):
+                                break
+                            name += k
+                        if(h in [str(g) for g in range(10)]):
+                            var += h
+                    program.append(self.vars[name+var])
+                elif (arg >= 'A' and arg <= 'Z' or arg >= 'a' and arg <= 'z'):
                     if arg not in self.vars:
                         self.vars[arg] = len(self.vars)
                         program.append(self.vars[arg])
@@ -158,12 +173,13 @@ class VirtualMachine:
             i += ARGS[OPCODES[cmd]]
             i += 1
         i = 0
-        for line in lines:
-            cmd = line[0]
-            if OPCODES[cmd] in [DEF]: #TODO dodaj DEF u OPCODES
-                endpoints = program.preprocessDefs()
-                newProgram = program.copyDef(endpoints)
-            i += 1
+        # for line in lines:
+        #     cmd = line[0]
+            
+        #     if OPCODES[cmd] in [DEF]: #TODO dodaj DEF u OPCODES
+        #         endpoints = program.preprocessDefs()
+        #         newProgram = program.copyDef(endpoints)
+        #     i += 1
         if DEBUG:
             print("[DEBUG]", program)
         return program
@@ -308,6 +324,9 @@ class VirtualMachine:
             elif code == NOP:
                 # do nothing
                 self.i += 1
+            
+            elif(code == LIST):
+                pass
 
             else:
                 print(f"Error! Unknown instruction: '{code}'")
