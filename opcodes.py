@@ -25,6 +25,9 @@ HALT = 400
 META = 401
 NOP = 402
 
+#Other
+LIST = 500
+
 OPCODES = {
     "LOAD": LOAD,
     "PRINT": PRINT,
@@ -43,7 +46,8 @@ OPCODES = {
     "GOTO": GOTO,
     "HALT": HALT,
     "META": META,
-    "NOP": NOP
+    "NOP": NOP,
+    "LIST": LIST   
 }
 
 
@@ -65,5 +69,6 @@ ARGS = {
     GOTO: 1,
     HALT: 0,
     META: 2,
-    NOP: 0
+    NOP: 0,
+    LIST: 2
 }
