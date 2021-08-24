@@ -86,6 +86,18 @@ class VirtualMachine:
         """Prints the value of register r"""
         print(">>>", self.registers[r])
 
+    def CALL(self, fname, regPointer, npointers, nargs):
+        # TODO
+        newProgram = self.p_registers * [0]
+        for i, n in enumerate(range(nargs)):
+            self.i += 1
+            a = self.program[self.i]
+            newProgram[i] = a
+        self.defs[fname]
+        f = VirtualMachine(self.n_registers, self.p_registers)
+        f.preprocess(newProgram)
+        f.loadProgram(newProgram)
+
     ###################
 
     def loadProgramFile(self, filename):
@@ -99,6 +111,17 @@ class VirtualMachine:
             print("[DEBUG]", lines)
         program = self.preprocess(lines)
         self.loadProgram(program)
+
+    def preprocessDefs(self, lines):
+        defs = []
+        enddefs = []
+        for i, line in enumerate(lines):
+            if line[0] == "DEF":
+                defs.append(i)
+            elif line[0] == "ENDDEF":
+                enddefs.append(i)
+
+        return [(d, e) for d, e in zip(defs, reversed(enddefs))]
 
     def preprocess(self, lines):
         """
