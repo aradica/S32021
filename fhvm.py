@@ -58,7 +58,6 @@ class VirtualMachine:
     def DIV(self, r1, r2, r3):
         self.registers[r3] = self.registers[r1] // self.registers[r2]
 
-    # TODO smisliti KUL imena za instrukcije (opcodove)
     def GOG(self, p, r1, r2):
         """If r1 > r2 GOTO p"""
         if self.registers[r1] > self.registers[r2]:
