@@ -90,7 +90,8 @@ class VirtualMachine:
         """Loads raw program from file and returns list of lists(lines)"""
         with open(filename, "r") as file:
             lines = file.readlines()
-            lines = [line.split() for line in lines]
+            lines = [line.split(";")[0].split() for line in lines]
+        print(lines)
         # return lines
         if DEBUG:
             print("[DEBUG]", lines)
