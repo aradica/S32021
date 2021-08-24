@@ -46,6 +46,10 @@ class VirtualMachine:
         """Stores registers[r1]+registers[r2] into registers[r3] """
         self.registers[r3] = self.registers[r1] + self.registers[r2]
 
+    def SUB(self, r1, r2, r3):
+        """Stores registers[r1]-registers[r2] into registers[r3] """
+        self.registers[r3] = self.registers[r1] - self.registers[r2]
+
     def MUL(self, r1, r2, r3):
         self.registers[r3] = self.registers[r1] * self.registers[r2]
 
@@ -199,7 +203,7 @@ class VirtualMachine:
                 r2 = self.program[self.i]
                 self.i += 1
                 r3 = self.program[self.i]
-                self.ADD(r1, -r2, r3)
+                self.SUB(r1, r2, r3)
 
             elif code == MUL:
                 self.i += 1
@@ -263,6 +267,6 @@ class VirtualMachine:
 
 
 if __name__ == "__main__":
-    vm = VirtualMachine(32, 32)
-    vm.loadProgramFile("kod.s3")
+    vm = VirtualMachine(10, 32)
+    vm.loadProgramFile("fib.s3")
     vm.run()
