@@ -1,0 +1,13 @@
+LOAD 0 0; Program koji ispisuje zbroj N brojeva (triangular sequence)
+LOAD 1 1
+LOAD 2 2
+LOAD 0 5
+LOAD 0 3
+INPUT 4
+PRINT 5
+ADD 3 1 6
+MUL 3 6 7
+DIV 7 2 5
+INC 3
+GOL 7 3 4
+HALT
