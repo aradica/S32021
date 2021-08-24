@@ -4,5 +4,5 @@ INPUT 2; asks the user for a number
 ADD 0 1 1; sums the numbers in registers 0 and 1 and stores it to register 1
 INC 0; adds 1 to register 0
 PRINT 1; prints register 1
-GOL 4 0 2; goes back to line 4 ("ADD 0 1 1")
+GOL 4 0 2; goes back to line 4 ("ADD 0 1 1") if register 0 is less then register 2
 HALT; stops the program
