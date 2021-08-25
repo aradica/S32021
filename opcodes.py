@@ -22,11 +22,12 @@ GOTO = 311
 
 # Halt
 HALT = 400
-META = 401
-NOP = 402
+
 
 #Other
 LIST = 500
+META = 401
+NOP = 402
 
 OPCODES = {
     "LOAD": LOAD,
