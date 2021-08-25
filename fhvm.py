@@ -266,9 +266,6 @@ if __name__ == "__main__":
                         default=64, help="Maximum program size")
     args = parser.parse_args()
 
-    args.file
-    args.registers
-
     vm = VirtualMachine(args.registers, args.maxprogram)
     vm.loadProgramFile(args.file)
     vm.run()
