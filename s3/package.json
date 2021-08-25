@@ -1,0 +1,25 @@
+{
+    "name": "s3",
+    "displayName": "S3",
+    "description": "S3 Programming Language",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.59.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "s3",
+            "aliases": ["S3", "s3"],
+            "extensions": [".s3"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "s3",
+            "scopeName": "source.s3",
+            "path": "./syntaxes/s3.tmLanguage.json"
+        }]
+    }
+}

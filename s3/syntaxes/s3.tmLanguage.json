@@ -1,0 +1,36 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "S3",
+	"patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#keywords"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.s3",
+					"match": "\\b(LOAD|PRINT|INPUT|LOADP|PRINTP|INPUTP|COPY|INC|ADD|SUB|MUL|DIV|GOG|GOL|GOE|GOTO|HALT|META|NOP|LIST)\\b"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.as",
+					"match": "(\\;).*$\n?",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.comment.as"
+						}
+					}
+				}
+			]
+		}
+	},
+	"scopeName": "source.s3"
+}
