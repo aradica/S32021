@@ -26,10 +26,10 @@ class Preprocessor:
         lines = [line.split(";")[0].split() for line in lines]
         rawProgram, lineSet = self.initialRead(lines)
         program = self.processLines(rawProgram, lines, lineSet)
-        startR, endR = self.preprocessDef(lines, lineSet)
-        newProgram = self.copyDef(startR, endR, program)
+        endpointsOuter, numDefs = self.preprocessDef(lines, lineSet)
+        DEFS = self.copyDef(endpointsOuter,  numDefs, program)
 
-        return program, newProgram, startR, endR
+        return program, DEFS, endpointsOuter
 
 
     def initialRead(self, lines):
@@ -64,25 +64,36 @@ class Preprocessor:
     def preprocessDef(self, lines, lineSet):
         """
         Finds locations in the program where declerations of functions begin and end.
-        Returns startR, endR
+        Counts the number of functions 
+        Returns list of endpoints,  numDefs
         """
+        numDefs = 0
         defs = []
-        enddefs = []
+        enddefs = 0
         endpoints = []
         proList = sorted(list(lineSet))
         for i, line in enumerate(lines):
             if line[0] == "DEF":
                 defs.append(i)
             elif line[0] == "ENDDEF":
-                enddefs.append(i)
+                enddefs = i
+                endpoints.append([defs.pop(), enddefs])
+        
 
-        if defs:
-            endpoints =  [(d, e) for d, e in zip(defs, reversed(enddefs))]
-            # Gets the first (outermost) endpoints
-            startL, endL = map(int, endpoints[0])
-            startR, endR = proList[startL], proList[endL]
+        if endpoints:
+            for i, l in enumerate(endpoints):
+                endpoints[i][0] = proList[l[0]] 
 
-            return startR, endR
+            endpoints.sort()
+            endpointsOuter = []
+            n = 0
+            for i, point in enumerate(endpoints):
+                if point[1] > n:
+                    endpointsOuter.append(point)
+                    n = point[1]
+            print('DEBUG',len(endpointsOuter))
+            return endpointsOuter, len(endpointsOuter)
+        
         return None, None
 
     def processLines(self, rawProgram, lines, lineSet):
@@ -101,18 +112,32 @@ class Preprocessor:
             i += 1
         return rawProgram
     
-    def copyDef(self, startR, endR, program):
+    def copyDef(self, endpointsOuter, numDefs, program):
         """
         Creates a new program for function virtual machine
         Copies from program
         """
-        if startR:
-            newProgram = program[startR : endR+1]
-            return newProgram
-        return None
+        DEFS = {}
+        if numDefs:
+            for i in range(numDefs):
+                newProgram = []
+                startR = endpointsOuter[i][0]
+                endR = endpointsOuter[i][1]
+                newProgram.append(program[startR : endR+1])
+                DEFS.update({i : newProgram})
+            return DEFS
+        else:
+            return None
 
 
         
 if __name__ == "__main__":
     processor = Preprocessor()
     program = processor.process("kod.s3")
+
+
+
+# if startR:
+#     newProgram = program[startR : endR+1]
+#     DEFS.update({numDefs : newProgram})
+#     return DEFS
