@@ -13,10 +13,10 @@ class Preprocessor:
         """
         Processes code file into virtual machine instructions
         returns:
-            program, newProgram, endpoints
+            program, DEFS, endpoints
         
         program - list of machine instructions
-        newProgram - function instructions
+        DEFS - dictionary with functions and their "names" (order of declaration)
         endpoints - begin and end locations for function declarations
 
         """
@@ -25,9 +25,9 @@ class Preprocessor:
     
         lines = [line.split(";")[0].split() for line in lines]
         rawProgram, lineSet = self.initialRead(lines)
-        program = self.processLines(rawProgram, lines, lineSet)
         endpointsOuter, numDefs = self.preprocessDef(lines, lineSet)
-        DEFS = self.copyDef(endpointsOuter,  numDefs, program)
+        DEFS = self.copyDef(endpointsOuter,  numDefs, rawProgram)
+        program = self.processLines(rawProgram, lines, lineSet)
 
         return program, DEFS, endpointsOuter
 
@@ -59,7 +59,23 @@ class Preprocessor:
                     print("Error: Incorrect Input Value")
                 i += 1
             i += 1
-        return rawProgram, lineSet #TODO DODAJ SVE OSTALO IG
+        return rawProgram, lineSet 
+
+    def processLines(self, rawProgram, lines, lineSet):
+        """
+        For commands that use line pointers 
+
+        Turns arg from line to program location
+        """
+        i = 0
+        proList = sorted(list(lineSet))
+        for line in lines:
+            cmd = line[0]
+            if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
+                rawProgram[i+1] = proList[int(line[1])-1]
+            i += ARGS[OPCODES[cmd]]
+            i += 1
+        return rawProgram
 
     def preprocessDef(self, lines, lineSet):
         """
@@ -67,7 +83,6 @@ class Preprocessor:
         Counts the number of functions 
         Returns list of endpoints,  numDefs
         """
-        numDefs = 0
         defs = []
         enddefs = 0
         endpoints = []
@@ -101,23 +116,8 @@ class Preprocessor:
         
         return None, None
 
-    def processLines(self, rawProgram, lines, lineSet):
-        """
-        For commands that use line pointers 
-
-        Turns arg from line to program location
-        """
-        i = 0
-        proList = sorted(list(lineSet))
-        for line in lines:
-            cmd = line[0]
-            if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
-                rawProgram[i+1] = proList[int(line[1])-1]
-            i += ARGS[OPCODES[cmd]]
-            i += 1
-        return rawProgram
     
-    def copyDef(self, endpointsOuter, numDefs, program):
+    def copyDef(self, endpointsOuter, numDefs, rawProgram):
         """
         Creates a new program for function virtual machine
         Copies from program
@@ -128,21 +128,114 @@ class Preprocessor:
                 newProgram = []
                 startR = endpointsOuter[i][0]
                 endR = endpointsOuter[i][1]
-                newProgram.append(program[startR : endR+1])
+                newProgram.append(rawProgram[startR : endR+1])
                 DEFS.update({i : newProgram})
             return DEFS
         else:
             return None
 
 
+class PreprocessorFunct:
+    def __init__(self):
+        pass
+
+    def process(self, rawNewProgram):
+        '''
+        Processes function program into function virtual machine instructions
+        returns:
+            newProgram, DEFS, endpoints
         
+        newProgram - list of machine instructions for fucntion VM
+        DEFS - dictionary with functions and their "names" (order of declaration)
+        endpoints - begin and end locations for function declarations
+        '''
+        
+        proList = self.proList(rawNewProgram)
+        endpoints, numDefs = self.processDef(rawNewProgram)
+        DEFS = self.copyDef(endpoints, numDefs, rawNewProgram)
+        newProgram = self.processLines(rawNewProgram, proList)
+        return newProgram, DEFS, endpoints
+
+
+
+    def proList(self, newProgram):
+        '''
+        Makes a list of all the places new lines begin
+        '''
+        lineSet = set()
+        i = 0
+        while i != len(newProgram):
+            cmd = newProgram[i]
+            lineSet.add(i)
+            #print(lineSet)
+            i += ARGS[cmd]
+            i += 1
+        
+        proList = sorted(list(lineSet))
+        return proList
+        
+    def processLines(self, newProgram, proList):
+        '''
+        For commands that use line pointers 
+
+        Turns arg from line to program location
+        '''
+        i = 0
+        print(len(newProgram))
+        while i < len(newProgram):
+            cmd = newProgram[i]
+            print('CMD:', cmd)
+            if cmd in [GOG, GOE, GOL, GOTO]:
+                newProgram[i+1] = proList[newProgram[i+1]]
+                #print(proList[newProgram[i+1]])
+            i += ARGS[cmd]
+            i += 1
+            print('I:', i)
+        return newProgram
+
+    def processDef(self, rawNewProgram):
+        '''
+        Finds locations in the program where declerations of functions begin and end.
+        Counts the number of functions 
+        Returns list of endpoints,  numDefs
+        '''
+        defs = []
+        enddefs = 0
+        endpoints = []
+        for i, chr in enumerate(rawNewProgram):
+            if chr == DEF:
+                defs.append(i)
+            elif chr == ENDDEF:
+                enddefs = i
+                endpoints.append([defs.pop(), enddefs])
+        endpoints.reverse()
+        endpoints.remove(endpoints[0])
+        if endpoints:
+            return endpoints, len(endpoints)  
+        return None, None 
+
+    def copyDef(self, endpoints, numDefs, rawNewProgram):
+        '''
+        Creates a new program for function virtual machine
+        Copies from program
+        '''
+        DEFS = {}
+        if numDefs:
+            for i in range(numDefs):
+                funcProgram = []
+                startR = endpoints[i][0]
+                endR = endpoints[i][1]
+                funcProgram.append(rawNewProgram[startR : endR+1])
+                DEFS.update({i : funcProgram})
+            return DEFS
+        return None
+
+
 if __name__ == "__main__":
-    processor = Preprocessor()
-    program = processor.process("kod.s3")
+    newProgram = [420, 100, 1, 0, 101, 0, 200, 0, 100, 1, 1, 301, 2, 0, 1, 421]
+    processorFunct = PreprocessorFunct()
+    newProgramm, DEFS, endpoints = processorFunct.process(newProgram)
+    print(f'ENDPOINTS: {endpoints}\nNEWPROGRAM: {newProgram}\nDEFS: {DEFS}')
+    
 
 
-
-# if startR:
-#     newProgram = program[startR : endR+1]
-#     DEFS.update({numDefs : newProgram})
-#     return DEFS
