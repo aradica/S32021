@@ -118,8 +118,6 @@ class VirtualMachine:
         while True:
             # Trenutna instrukcija ili argument
             code = self.program[self.i]
-            # print(self.i, "CODE:", code)
-            # code = OPCODES[code]
             if code == HALT:
                 break
             elif code == LOAD:
