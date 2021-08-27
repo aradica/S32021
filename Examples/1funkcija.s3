@@ -1,0 +1,6 @@
+LIST L 5
+LOAD 10 L[0]
+LOAD 5 L[1]
+ADD L[0] L[1] L[2]
+PRINT L[2]
+HALT
