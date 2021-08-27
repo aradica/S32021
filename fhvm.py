@@ -98,8 +98,10 @@ class VirtualMachine:
     ###################
     def loadProgramFile(self, filename):
         preprocessor = Preprocessor()
-        program, newProgram, startR, endR = preprocessor.process(filename)
-        self.loadProgram(program)
+        program, DEFS, endpointsOuter = preprocessor.process(filename)
+        #print(f'PROGRAM: {program}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {endpointsOuter} ')
+        
+        #self.loadProgram(program)
 
     def loadProgram(self, program):
         if len(program) > self.p_registers:
