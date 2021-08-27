@@ -109,7 +109,7 @@ class Preprocessor:
             endpointsDict = {x[0]:x[1] for x in endpointsOuter}
             return endpointsOuter, len(endpointsOuter), endpointsDict
         
-        return None, None
+        return None, None, {}
 
     
     def copyDef(self, endpointsOuter, numDefs, rawProgram):

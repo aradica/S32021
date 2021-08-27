@@ -98,7 +98,7 @@ class VirtualMachine:
     ###################
     def loadProgramFile(self, filename):
         preprocessor = Preprocessor()
-        program, DEFS, endpointsOuter = preprocessor.process(filename)
+        self.program, DEFS, endpointsOuter = preprocessor.process(filename)
         #print(f'PROGRAM: {program}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {endpointsOuter} ')
         
         #self.loadProgram(program)
