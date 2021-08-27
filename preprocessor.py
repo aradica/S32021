@@ -46,9 +46,26 @@ class Preprocessor:
             cmd = line[0]
             lineSet.add(i)
             rawProgram.append(OPCODES[cmd])
+            if cmd == 'LIST':
+                for h in range(int(line[2])):
+                    vars[line[1]+str(h)] = len(vars)
+                continue
             for arg in line[1:]:
                 if arg < 'A':
                     rawProgram.append(int(arg))
+                elif "[" in arg:
+                    var = ""
+                    for h in arg:
+                        name = ""
+                        for k in arg:
+                            if k == "[":
+                                break
+                            name += k
+                        if (h in [str(g) for g in range(10)]):
+                            var += h
+                    rawProgram.append(vars[name+var])
+
+
                 elif arg >= 'A' and arg <= 'Z' or arg >= 'a' and arg <= 'z':
                     if arg not in vars:
                         vars[arg] = len(vars)
@@ -105,7 +122,6 @@ class Preprocessor:
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
-            print(endpointsOuter)
             endpointsDict = {x[0]:x[1] for x in endpointsOuter}
             return endpointsOuter, len(endpointsOuter), endpointsDict
         
@@ -201,7 +217,7 @@ class PreprocessorFunct:
         endpoints.reverse()
         endpoints.remove(endpoints[0])
         if endpoints:
-            return endpoints, len(endpoints)  
+            return endpoints, len(endpoints)
         return None, None 
 
     def copyDef(self, endpoints, numDefs, rawNewProgram):
