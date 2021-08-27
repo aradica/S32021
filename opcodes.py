@@ -30,6 +30,7 @@ META = 401
 NOP = 402
 DEF = 420
 ENDDEF = 421
+CALL = 430
 
 OPCODES = {
     "LOAD": LOAD,
@@ -52,7 +53,8 @@ OPCODES = {
     "NOP": NOP,
     "LIST": LIST,
     "DEF" : DEF,
-    "ENDDEF" : ENDDEF
+    "ENDDEF" : ENDDEF,
+    "CALL" : CALL
 }
 
 
@@ -76,6 +78,7 @@ ARGS = {
     META: 2,
     NOP: 0,
     LIST: 2,
-    DEF : 0,
-    ENDDEF: 0
+    DEF : 1,
+    ENDDEF: 0,
+    CALL : 1
 }
