@@ -28,6 +28,8 @@ HALT = 400
 LIST = 500
 META = 401
 NOP = 402
+DEF = 420
+ENDDEF = 421
 
 OPCODES = {
     "LOAD": LOAD,
@@ -48,7 +50,9 @@ OPCODES = {
     "HALT": HALT,
     "META": META,
     "NOP": NOP,
-    "LIST": LIST   
+    "LIST": LIST,
+    "DEF" : DEF,
+    "ENDDEF" : ENDDEF
 }
 
 
@@ -71,5 +75,7 @@ ARGS = {
     HALT: 0,
     META: 2,
     NOP: 0,
-    LIST: 2
+    LIST: 2,
+    DEF : 0,
+    ENDDEF: 0
 }
