@@ -93,25 +93,18 @@ class Preprocessor:
             elif line[0] == "ENDDEF":
                 enddefs = i
                 endpoints.append([defs.pop(), enddefs])
-        # print(endpoints)
 
         if endpoints:
             for i, l in enumerate(endpoints):
-                # print(endpoints[i][0])
-                # print('L:',l)
                 endpoints[i][0] = proList[l[0]]
                 endpoints[i][1] = proList[l[1]]
-            # print(proList)
-            # print(endpoints)
             endpoints.sort()
-            # print('SORTED', endpoints)
             endpointsOuter = []
             n = 0
             for i, point in enumerate(endpoints):
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
-            #print('DEBUG',len(endpointsOuter))
             return endpointsOuter, len(endpointsOuter)
         
         return None, None
@@ -129,7 +122,7 @@ class Preprocessor:
                 startR = endpointsOuter[i][0]
                 endR = endpointsOuter[i][1]
                 newProgram.append(rawProgram[startR : endR+1])
-                DEFS.update({i : newProgram})
+                DEFS.update({rawProgram[startR+1] : newProgram[0]})
             return DEFS
         else:
             return None
@@ -167,7 +160,6 @@ class PreprocessorFunct:
         while i != len(newProgram):
             cmd = newProgram[i]
             lineSet.add(i)
-            #print(lineSet)
             i += ARGS[cmd]
             i += 1
         
@@ -181,16 +173,12 @@ class PreprocessorFunct:
         Turns arg from line to program location
         '''
         i = 0
-        print(len(newProgram))
         while i < len(newProgram):
             cmd = newProgram[i]
-            print('CMD:', cmd)
             if cmd in [GOG, GOE, GOL, GOTO]:
                 newProgram[i+1] = proList[newProgram[i+1]]
-                #print(proList[newProgram[i+1]])
             i += ARGS[cmd]
             i += 1
-            print('I:', i)
         return newProgram
 
     def processDef(self, rawNewProgram):
@@ -226,13 +214,13 @@ class PreprocessorFunct:
                 startR = endpoints[i][0]
                 endR = endpoints[i][1]
                 funcProgram.append(rawNewProgram[startR : endR+1])
-                DEFS.update({i : funcProgram})
+                DEFS.update({i : funcProgram[0]})
             return DEFS
         return None
 
 
 if __name__ == "__main__":
-    newProgram = [420, 100, 1, 0, 101, 0, 200, 0, 100, 1, 1, 301, 2, 0, 1, 421]
+    newProgram = [420, 0, 100, 1, 0, 101, 0, 200, 0, 100, 1, 1, 301, 2, 0, 1, 421]
     processorFunct = PreprocessorFunct()
     newProgramm, DEFS, endpoints = processorFunct.process(newProgram)
     print(f'ENDPOINTS: {endpoints}\nNEWPROGRAM: {newProgram}\nDEFS: {DEFS}')
