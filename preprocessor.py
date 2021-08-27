@@ -25,11 +25,11 @@ class Preprocessor:
     
         lines = [line.split(";")[0].split() for line in lines]
         rawProgram, lineSet = self.initialRead(lines)
-        endpointsOuter, numDefs = self.preprocessDef(lines, lineSet)
+        endpointsOuter, numDefs, endpointsDict = self.preprocessDef(lines, lineSet)
         DEFS = self.copyDef(endpointsOuter,  numDefs, rawProgram)
         program = self.processLines(rawProgram, lines, lineSet)
 
-        return program, DEFS, endpointsOuter
+        return program, DEFS, endpointsDict
 
 
     def initialRead(self, lines):
@@ -105,7 +105,9 @@ class Preprocessor:
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
-            return endpointsOuter, len(endpointsOuter)
+            print(endpointsOuter)
+            endpointsDict = {x[0]:x[1] for x in endpointsOuter}
+            return endpointsOuter, len(endpointsOuter), endpointsDict
         
         return None, None
 
