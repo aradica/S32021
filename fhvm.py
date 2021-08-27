@@ -22,6 +22,7 @@ class VirtualMachine:
         self.p_registers = p_registers
         # Pokazivač na programski registar
         self.i = 0
+        self.endpointsOuter = {}
 
 
     def __repr__(self):
@@ -98,10 +99,10 @@ class VirtualMachine:
     ###################
     def loadProgramFile(self, filename):
         preprocessor = Preprocessor()
-        self.program, DEFS, endpointsOuter = preprocessor.process(filename)
-        #print(f'PROGRAM: {program}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {endpointsOuter} ')
+        program, DEFS, self.endpointsOuter = preprocessor.process(filename)
+        print(f'PROGRAM: {program}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {self.endpointsOuter} ')
         
-        #self.loadProgram(program)
+        self.loadProgram(program)
 
     def loadProgram(self, program):
         if len(program) > self.p_registers:
@@ -241,6 +242,9 @@ class VirtualMachine:
             elif code == NOP:
                 # do nothing
                 self.i += 1
+
+            elif code == DEF:
+                self.i = self.endpointsOuter[self.i]
             
             elif(code == LIST):
                 pass
