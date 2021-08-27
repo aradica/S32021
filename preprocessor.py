@@ -78,20 +78,25 @@ class Preprocessor:
             elif line[0] == "ENDDEF":
                 enddefs = i
                 endpoints.append([defs.pop(), enddefs])
-        
+        # print(endpoints)
 
         if endpoints:
             for i, l in enumerate(endpoints):
-                endpoints[i][0] = proList[l[0]] 
-
+                # print(endpoints[i][0])
+                # print('L:',l)
+                endpoints[i][0] = proList[l[0]]
+                endpoints[i][1] = proList[l[1]]
+            # print(proList)
+            # print(endpoints)
             endpoints.sort()
+            # print('SORTED', endpoints)
             endpointsOuter = []
             n = 0
             for i, point in enumerate(endpoints):
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
-            print('DEBUG',len(endpointsOuter))
+            #print('DEBUG',len(endpointsOuter))
             return endpointsOuter, len(endpointsOuter)
         
         return None, None
