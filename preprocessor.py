@@ -122,6 +122,7 @@ class Preprocessor:
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
+            print(endpointsOuter)
             endpointsDict = {x[0]:x[1] for x in endpointsOuter}
             return endpointsOuter, len(endpointsOuter), endpointsDict
         
@@ -162,10 +163,10 @@ class PreprocessorFunct:
         '''
         
         proList = self.proList(rawNewProgram)
-        endpoints, numDefs = self.processDef(rawNewProgram)
-        DEFS = self.copyDef(endpoints, numDefs, rawNewProgram)
+        endpoints, numDefs, endpointsDict = self.processDef(rawNewProgram)
+        fDEFS = self.copyDef(endpoints, numDefs, rawNewProgram)
         newProgram = self.processLines(rawNewProgram, proList)
-        return newProgram, DEFS, endpoints
+        return newProgram, fDEFS, endpointsDict
 
 
 
@@ -217,7 +218,8 @@ class PreprocessorFunct:
         endpoints.reverse()
         endpoints.remove(endpoints[0])
         if endpoints:
-            return endpoints, len(endpoints)
+            endpointsDict = {x[0]:x[1] for x in endpoints}
+            return endpoints, len(endpoints), endpointsDict
         return None, None 
 
     def copyDef(self, endpoints, numDefs, rawNewProgram):
@@ -225,23 +227,23 @@ class PreprocessorFunct:
         Creates a new program for function virtual machine
         Copies from program
         '''
-        DEFS = {}
+        fDEFS = {}
         if numDefs:
             for i in range(numDefs):
                 funcProgram = []
                 startR = endpoints[i][0]
                 endR = endpoints[i][1]
                 funcProgram.append(rawNewProgram[startR : endR+1])
-                DEFS.update({i : funcProgram[0]})
-            return DEFS
+                fDEFS.update({rawNewProgram[startR + 1] : funcProgram[0]})
+            return fDEFS
         return None
 
 
 if __name__ == "__main__":
-    newProgram = [420, 0, 100, 1, 0, 101, 0, 200, 0, 100, 1, 1, 301, 2, 0, 1, 421]
+    newProgram = [420, 0, 100, 1, 1, 101, 1, 420, 2, 200, 1, 210, 3, 4, 1, 301, 1, 3, 1, 421, 421]
     processorFunct = PreprocessorFunct()
     newProgramm, DEFS, endpoints = processorFunct.process(newProgram)
-    print(f'ENDPOINTS: {endpoints}\nNEWPROGRAM: {newProgram}\nDEFS: {DEFS}')
+    print(f'PROGRAM: {newProgram}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {endpoints} ')
     
 
 
