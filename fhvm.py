@@ -6,7 +6,7 @@ Project: Turing Complete
 Višnjan, 2021
 """
 from opcodes import *
-from preprocessor import Preprocessor
+from preprocessor import Preprocessor, PreprocessorFunct
 import argparse
 
 
@@ -88,11 +88,11 @@ class VirtualMachine:
         """Prints the value of register r"""
         print(">>>", self.registers[r])
 
-    def CALL(self, fname, regPointer, npointers, nargs): #TODO dovrsi ig
-        newProgram = self.p_registers * [0]
+    def CALL(self, rawNewProgram, ): #TODO dovrsi ig
 
-        self.defs[fname]
         f = VirtualMachine(self.n_registers, self.p_registers)
+        preprocessor = PreprocessorFunct()
+        newProgram, fDEFS, endpointsouter = preprocessor.process(rawNewProgram)
         f.preprocess(newProgram)
         f.loadProgram(newProgram)
 
