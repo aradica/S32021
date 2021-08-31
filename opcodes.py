@@ -78,7 +78,5 @@ ARGS = {
     META: 2,
     NOP: 0,
     LIST: 2,
-    DEF : 1,
     ENDDEF: 0,
-    CALL : 1
 }
