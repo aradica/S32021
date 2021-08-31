@@ -24,11 +24,12 @@ class Preprocessor:
             lines = file.readlines()
     
         lines = [line.split(";")[0].split() for line in lines]
+        self.argsUpdate(lines)
         rawProgram, lineSet = self.initialRead(lines)
         endpointsOuter, numDefs, endpointsDict = self.preprocessDef(lines, lineSet)
         DEFS = self.copyDef(endpointsOuter,  numDefs, rawProgram)
         program = self.processLines(rawProgram, lines, lineSet)
-
+        print(ARGS)
         return program, DEFS, endpointsDict
 
 
@@ -90,7 +91,12 @@ class Preprocessor:
             cmd = line[0]
             if OPCODES[cmd] in [GOG, GOL, GOE, GOTO]:
                 rawProgram[i+1] = proList[int(line[1])-1]
-            i += ARGS[OPCODES[cmd]]
+            if OPCODES[cmd] == DEF:
+                i += ARGS[(OPCODES[cmd], line[1])]
+            elif OPCODES[cmd] == CALL:
+                i += ARGS[(OPCODES[cmd], line[1])]
+            else:
+                i += ARGS[OPCODES[cmd]]
             i += 1
         return rawProgram
 
@@ -122,11 +128,21 @@ class Preprocessor:
                 if point[1] > n:
                     endpointsOuter.append(point)
                     n = point[1]
-            print(endpointsOuter)
             endpointsDict = {x[0]:x[1] for x in endpointsOuter}
             return endpointsOuter, len(endpointsOuter), endpointsDict
         
         return None, None, {}
+
+    def argsUpdate(self, lines):
+        n = 0 
+        for i, line in enumerate(lines):
+            if line[0] == "DEF":
+                n = len(line) -1
+                ARGS.update({(DEF, line[1]) : n})
+            elif line[0] == "CALL":
+                n = len(line) -1
+                ARGS.update({(CALL, line[1]) : n})
+                 
 
     
     def copyDef(self, endpointsOuter, numDefs, rawProgram):
@@ -161,7 +177,8 @@ class PreprocessorFunct:
         DEFS - dictionary with functions and their "names" (order of declaration)
         endpoints - begin and end locations for function declarations
         '''
-        
+        self.argsUpdate(rawNewProgram)
+        print(ARGS)
         proList = self.proList(rawNewProgram)
         endpoints, numDefs, endpointsDict = self.processDef(rawNewProgram)
         fDEFS = self.copyDef(endpoints, numDefs, rawNewProgram)
@@ -179,7 +196,12 @@ class PreprocessorFunct:
         while i != len(newProgram):
             cmd = newProgram[i]
             lineSet.add(i)
-            i += ARGS[cmd]
+            if cmd == DEF:
+                i += ARGS[(cmd, newProgram[i+1])]
+            elif cmd == CALL:
+                i += ARGS[(cmd, newProgram[i+1])]
+            else:
+                i += ARGS[cmd]  
             i += 1
         
         proList = sorted(list(lineSet))
@@ -196,7 +218,12 @@ class PreprocessorFunct:
             cmd = newProgram[i]
             if cmd in [GOG, GOE, GOL, GOTO]:
                 newProgram[i+1] = proList[newProgram[i+1]]
-            i += ARGS[cmd]
+            if cmd == DEF:
+                i += ARGS[(cmd, newProgram[i+1])]
+            elif cmd == CALL:
+                i += ARGS[(cmd, newProgram[i+1])]
+            else:
+                i += ARGS[cmd]            
             i += 1
         return newProgram
 
@@ -220,7 +247,28 @@ class PreprocessorFunct:
         if endpoints:
             endpointsDict = {x[0]:x[1] for x in endpoints}
             return endpoints, len(endpoints), endpointsDict
-        return None, None 
+        return None, None, None
+
+    def argsUpdate(self, rawNewProgram):
+        n = 0
+        for i, char in enumerate(rawNewProgram):
+            if char == DEF:
+                n += 2
+                name = rawNewProgram[i+1]
+                X = rawNewProgram[i+2]
+                n += X
+                Y = rawNewProgram[i+3+X]
+                n += Y + 1
+                ARGS.update({(DEF, name): n})
+            if char == CALL:
+                n += 2
+                name = rawNewProgram[i+1]
+                X = rawNewProgram[i+1]
+                n += X
+                ARGS.update({(CALL, name) : n})
+        print('TU', ARGS)
+
+
 
     def copyDef(self, endpoints, numDefs, rawNewProgram):
         '''
@@ -240,7 +288,7 @@ class PreprocessorFunct:
 
 
 if __name__ == "__main__":
-    newProgram = [420, 0, 100, 1, 1, 101, 1, 420, 2, 200, 1, 210, 3, 4, 1, 301, 1, 3, 1, 421, 421]
+    newProgram = [420, 0, 1, 1, 1, 2, 100, 5, 3, 301, 5, 1, 3, 100, 1, 2, 400, 100, 0, 2, 400, 421]
     processorFunct = PreprocessorFunct()
     newProgramm, DEFS, endpoints = processorFunct.process(newProgram)
     print(f'PROGRAM: {newProgram}\n>>======================================================\nDEFS: {DEFS}\n>>======================================================\nEndpointsOuter: {endpoints} ')
